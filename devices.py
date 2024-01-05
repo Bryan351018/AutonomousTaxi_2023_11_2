@@ -2,12 +2,12 @@
 All devices used by the robot
 '''
 
-from pybricks.ev3devices import Motor, GyroSensor
+from pybricks.ev3devices import Motor, GyroSensor, ColorSensor
 from pybricks.parameters import Port
 from spacey_drivebase import SpaceyDriveBase
 
 # Arm motor
-# arm = Motor(Port.C)
+arm = Motor(Port.C)
 
 # Left wheel motor
 MotorL = Motor(Port.A)
@@ -23,3 +23,9 @@ TRACK_B = 95
 
 # Drivebase
 base = SpaceyDriveBase(MotorL, MotorR, WHEEL_D, TRACK_B)
+
+# Left light sensor
+LightL = ColorSensor(Port.S1)
+
+# Right light sensor
+LightR = ColorSensor(Port.S2)

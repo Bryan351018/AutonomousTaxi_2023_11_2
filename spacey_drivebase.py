@@ -33,18 +33,23 @@ class SpaceyDriveBase:
         # Track circle circumference
         self.trk_circ = track_b * math.pi
     
-    def brake(stopMode=Stop.BRAKE):
+    def brake(self, stopMode=Stop.BRAKE):
         '''
         Stops the base.
 
         PARAMETERS
-        stopMode: braking mode (Stop). Default is Stop.BRAKE.
+        stopMode: braking mode (Stop). If set to None, does not brake. Default is Stop.BRAKE.
         '''
         if stopMode == Stop.BRAKE:
-            pass
+            self.motorL.brake()
+            self.motorR.brake()
         elif stopMode == Stop.COAST:
-            pass
+            self.motorL.stop()
+            self.motorR.stop()
         elif stopMode == Stop.HOLD:
+            self.motorL.hold()
+            self.motorR.hold()
+        elif stopMode == None:
             pass
         else:
             raise ValueError(stopMode + "is not an acceptable brake mode")
@@ -56,7 +61,7 @@ class SpaceyDriveBase:
         PARAMETERS
         speed: Linear speed, in mm/s (int)
         dist: Distance to travel, in mm (int). Default is None, which makes it go straight forever.
-        stopMode: braking mode (Stop). Default is Stop.BRAKE.
+        stopMode: braking mode (Stop). If set to None, does not brake. Default is Stop.BRAKE.
         '''
         # Angular speed
         ang_spd = speed / self.whl_circ * 360
@@ -82,7 +87,7 @@ class SpaceyDriveBase:
         PARAMETERS
         speed: Angular speed, in deg/s (int)
         angle: Angle to turn, in deg (int). Default is None, which makes it turn forever.
-        stopMode: braking mode (Stop). Default is Stop.BRAKE.
+        stopMode: braking mode (Stop). If set to None, does not brake. Default is Stop.BRAKE.
         '''
 
         # Motor angular speed
