@@ -2,14 +2,17 @@
 A barcode scanner
 '''
 
-# Width of each bar
-BAR_WIDTH = 3
+from pybricks.tools import wait
+from pybricks.parameters import Stop
+
+# Width of each bar (mm)
+BAR_WIDTH = 30
 
 # Number of bars
 BAR_COUNT = 3
 
 # Reading speed (mm/s)
-READ_SPD = 50
+READ_SPD = 150
 
 def noEscape(b):
     return False
@@ -47,12 +50,42 @@ class BarCodeScanner:
         # Clear bits
         self.bits = []
 
+        # Advance to first bit
+
+
+        self.base.straight(READ_SPD, stopMode=Stop.COAST)
+
+        # Take measurement of start line
+        startLineRef = self.Lsensor.reflection()
+
+        # Time epsilon, in ms (very small value)
+        T_EPS = 10
+        '''Time epsilon, in ms (very small value)'''
+
+        # Threshold between start line and white bit (%)
+        REF_THRES = 10
+
+        # Threshold between white bit and black bit (%)
+        BIT_REF_THRES = 60
+
+        while startLineRef - self.Lsensor.reflection() < REF_THRES:
+            wait(T_EPS)
+
+        self.base.straight(READ_SPD, BAR_WIDTH / 2, stopMode=Stop.COAST)
+
         for i in range(BAR_COUNT):
             # Read a bit (using left sensor)
-            # TBD
+            ref = self.Lsensor.reflection()
+
+            # Black bit
+            if ref < 100 - REF_THRES - BIT_REF_THRES:
+                self.bits.append(True)
+            # White bit
+            else:
+                self.bits.append(False)
 
             # Drive forward a fixed step
-            self.base.straight(READ_SPD, BAR_WIDTH)
+            self.base.straight(READ_SPD, BAR_WIDTH, stopMode=Stop.COAST)
 
             if i > 0 and quickescape(self.bits):
                 break
