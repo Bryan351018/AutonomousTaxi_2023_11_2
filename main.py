@@ -1,47 +1,79 @@
 #!/usr/bin/env pybricks-micropython
-from pybricks.media.ev3dev import SoundFile
-from pybricks.parameters import Stop
+from pybricks.media.ev3dev import SoundFile, Font
 from pybricks.tools import wait
-from devices import *
-from barcode_scanner import BarCodeScanner
+from devices import brick
+from error_reporting import report
 
-
-# def setArm(activated):
-#     # Speed of the robotic arm
-#     ARM_SPEED = 3000
-
-#     # Target rotation angle
-#     TARGET_ANGLE = 135
-
-#     '''Set the state of the robotic arm. activated=True represents down, and activated=False represents up.'''
-#     if activated:
-#         arm.run_target(ARM_SPEED, TARGET_ANGLE)
-#     else:
-#         arm.run_target(ARM_SPEED, 0)
-
-# setArm(True)
-# wait(3000)
-# setArm(False)
+# Time epsilon, in ms (very small value)
+T_EPS = 10
+'''Time epsilon, in ms (very small value)'''
 
 try:
+    from pybricks.parameters import Stop
+    from barcode_scanner import BarCodeScanner, evalPassengerDest
+    from devices import *
+
+    # Set state of robotic arm
+    def setArm(motor, activated):
+        # Speed of the robotic arm
+        ARM_SPEED = 3000
+
+        # Target rotation angle
+        TARGET_ANGLE = 90
+
+        '''Set the state of the robotic arm. activated=True represents down, and activated=False represents up.'''
+        # if activated:
+        #     motor.run_target(ARM_SPEED, 0)
+        # else:
+        #     motor.run_target(ARM_SPEED, TARGET_ANGLE)
+        if activated:
+            motor.run_until_stalled(-ARM_SPEED, Stop.BRAKE)
+        else:
+            motor.run_until_stalled(ARM_SPEED, Stop.BRAKE)
+
+    # Reset arms
+    setArm(BigArm, False)
+    setArm(SmallArm, False)
 
     # Barcode scanner object
     scanner = BarCodeScanner(LightL, LightR, base)
 
-    # Time epsilon, in ms (very small value)
-    T_EPS = 10
-    '''Time epsilon, in ms (very small value)'''
+    # Base move and turn speeds
+    BASE_SPD = 150
+    BASE_TURN_SPD = 1000
 
-    bits = scanner.readbits()
+    # Passenger destination
+    pass_dest = ""
 
-    for bit in bits:
-        if bit:
-            brick.speaker.play_notes(["F4/4", "A4/4", "B4/4", "D5/4"], tempo=200)
-        else:
-            brick.speaker.play_notes(["E4/4", "G4/4", "B4/4", "E5/4"], tempo=200)
+    # Set passenger destination
+    def set_dest(dest):
+        global pass_dest
+        pass_dest = dest
+
+    bits = scanner.readbits(evalPassengerDest(set_dest))
+
+    # Turn robot to the right
+    base.turn(BASE_TURN_SPD, 90)
+
+    # Line up at edge of table
+    base.straight(BASE_SPD, 80, None)
+    base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
+
+    # Turn right and go to black line
+    base.turn(BASE_TURN_SPD, 90)
+    base.straight_until_line(BASE_SPD, LightL, LightR)
+    base.turn(BASE_TURN_SPD, 10)
+
+    # Get first passenger
+    setArm(BigArm, True)
+    base.straight(BASE_SPD, 460)
+    base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
 
     # Infinite pause to keep the program running
     while True:
         wait(T_EPS)
-except:
-    brick.speaker.play_file(SoundFile.ERROR)
+    
+
+# Error reporting
+except Exception as e:
+    report(e, brick)
