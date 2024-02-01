@@ -33,7 +33,7 @@ try:
 
     # Reset arms
     setArm(BigArm, False)
-    setArm(SmallArm, False)
+    # setArm(SmallArm, False)
 
     # Barcode scanner object
     scanner = BarCodeScanner(LightL, LightR, base)
@@ -42,13 +42,16 @@ try:
     BASE_SPD = 150
     BASE_TURN_SPD = 1000
 
-    # Passenger destination
-    pass_dest = ""
+    # Passenger 2 destination
+    PASS_2_DEST = "A"
 
-    # Set passenger destination
+    # Passenger 3 destination
+    pass_3_dest = ""
+
+    # Set passenger 3 destination
     def set_dest(dest):
-        global pass_dest
-        pass_dest = dest
+        global pass_3_dest
+        pass_3_dest = dest
 
     bits = scanner.readbits(evalPassengerDest(set_dest))
 
@@ -59,14 +62,41 @@ try:
     base.straight(BASE_SPD, 80, None)
     base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
 
-    # Turn right and go to black line
+    # Turn right and go to black line, then get first passenger
     base.turn(BASE_TURN_SPD, 90)
-    base.straight_until_line(BASE_SPD, LightL, LightR)
+    base.straight_until_line(BASE_SPD, LightL, LightR, True, BASE_SPD/6, end_callback=lambda:setArm(BigArm, True))
     base.turn(BASE_TURN_SPD, 10)
 
-    # Get first passenger
-    setArm(BigArm, True)
+    # Drop first passenger
     base.straight(BASE_SPD, 460)
+    base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
+
+    base.turn(BASE_TURN_SPD, 90)
+    base.straight(BASE_SPD, 160)
+    base.turn(BASE_TURN_SPD, -90)
+    setArm(BigArm, False)
+    base.straight(BASE_SPD, 80)
+    base.straight(BASE_SPD, -80)
+
+    # Go to other black line
+    base.turn(BASE_TURN_SPD, 90)
+    base.straight(BASE_SPD, 200)
+    base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
+    base.turn(BASE_TURN_SPD, 90)
+    base.straight_until_line(BASE_SPD, LightL, LightR, True, BASE_SPD/6, end_callback=lambda:setArm(BigArm, True))
+
+    # Send passenger 2
+    if PASS_2_DEST == "A":
+        pass
+    elif PASS_2_DEST == "B":
+        pass
+    elif PASS_2_DEST == "C":
+        pass
+    else:
+        raise ValueError("Invalid passenger 2 destination \"" + PASS_2_DEST + "\"")
+    
+    # Go to location of passenger 3
+    base.straight(BASE_SPD, 1150)
     base.lineup(BASE_SPD/2, 50, LightL, LightR, iterations=8)
 
     # Infinite pause to keep the program running

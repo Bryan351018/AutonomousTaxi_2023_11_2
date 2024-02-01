@@ -162,7 +162,7 @@ class SpaceyDriveBase:
 
         self.brake()
 
-    def lineside(self, speed, sensorL, sensorR, is_left, bias=30, thres=30):
+    def lineside(self, speed, sensorL, sensorR, is_left, bias, thres=30):
         '''
         Line up the the side of the stage and move forward an infintesimal step aligned with it
 
@@ -202,7 +202,7 @@ class SpaceyDriveBase:
         
 
 
-    def straight_until_line(self, speed, sensorL, sensorR):
+    def straight_until_line(self, speed, sensorL, sensorR, is_left, bias=30, end_callback=lambda x:x):
         '''
         Go straight until a black line is sensed
 
@@ -220,9 +220,11 @@ class SpaceyDriveBase:
         STOP_LINE_THRES = 40
 
         # Go until black line
-        while (sensorL.reflection() + sensorR.reflection()) / 2 > table_light - STOP_LINE_THRES:
-            self.lineside(speed, sensorL, sensorR, True)
+        while ((sensorL.reflection() > table_light - STOP_LINE_THRES) and not is_left) or ((sensorR.reflection() > table_light - STOP_LINE_THRES) and is_left):
+            self.lineside(speed, sensorL, sensorR, True, bias)
+            wait(T_EPS)
 
         # Stop at black line
         self.brake(Stop.BRAKE)
+        end_callback()
         wait(2000)

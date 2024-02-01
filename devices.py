@@ -67,10 +67,10 @@ TRACK_B = 95
 base = SpaceyDriveBase(MotorL, MotorR, WHEEL_D, TRACK_B)
 
 # Big arm
-BigArm = attempt_connect(Motor, Port.B)
+BigArm = attempt_connect(Motor, Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
 
 # Small arm
-SmallArm = attempt_connect(Motor, Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
+# SmallArm = attempt_connect(Motor, Port.C, positive_direction=Direction.COUNTERCLOCKWISE)
 
 # Left light sensor
 LightL = attempt_connect(ColorSensor, Port.S1)

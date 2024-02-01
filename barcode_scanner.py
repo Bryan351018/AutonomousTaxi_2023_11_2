@@ -63,7 +63,7 @@ class BarCodeScanner:
         '''Time epsilon, in ms (very small value)'''
 
         # Threshold between start line and white bit (%)
-        REF_THRES = 10
+        REF_THRES = 20
 
         # Threshold between white bit and black bit (%)
         BIT_REF_THRES = 60
