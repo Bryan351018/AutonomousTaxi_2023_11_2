@@ -5,8 +5,10 @@ Reporting errors on the brick
 from pybricks.hubs import EV3Brick
 from pybricks.media.ev3dev import Font
 from pybricks.tools import wait
+from pybricks.parameters import Color
 
 def report(error, brick):
+    brick.light.on(Color.RED)
     print(error)
 
     if isinstance(error, str):
@@ -35,6 +37,8 @@ def report(error, brick):
 
     brick.screen.set_font(Font(None, 3))
     brick.screen.print(output, end="")
+
+    brick.speaker.play_notes(["A2/4", "D#3/4"], 60)
 
     # Time epsilon, in ms (very small value)
     T_EPS = 10

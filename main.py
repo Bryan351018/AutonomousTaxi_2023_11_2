@@ -3,6 +3,7 @@ from pybricks.media.ev3dev import SoundFile, Font
 from pybricks.tools import wait
 from devices import brick
 from error_reporting import report
+from pybricks.parameters import Color
 
 # Time epsilon, in ms (very small value)
 T_EPS = 10
@@ -30,6 +31,20 @@ try:
             motor.run_until_stalled(-ARM_SPEED, Stop.BRAKE)
         else:
             motor.run_until_stalled(ARM_SPEED, Stop.BRAKE)
+
+    # Preload screen
+    brick.light.on(Color.YELLOW)
+    brick.speaker.beep(440, 100)
+    brick.screen.draw_text(0, 0, "All Systems OK.")
+    brick.screen.draw_text(0, 20, "Press any button")
+    brick.screen.draw_text(0, 40, "to start.")
+    while len(brick.buttons.pressed()) == 0:
+        wait(T_EPS)
+    brick.screen.clear()
+    brick.screen.draw_text(0, 0, "Running.")
+    brick.speaker.beep(880, 50)
+    brick.light.on(Color.GREEN)
+
 
     # Reset arms
     setArm(BigArm, False)
