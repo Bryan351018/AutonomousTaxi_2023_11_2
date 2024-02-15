@@ -5,10 +5,8 @@ An improved version of pybrick's drivebase module
 from pybricks.parameters import Stop
 from pybricks.tools import wait
 import math
-
-# Time epsilon, in ms (very small value)
-T_EPS = 10
-'''Time epsilon, in ms (very small value)'''
+from configs import T_EPS
+import configs
 
 class SpaceyDriveBase:
     '''An improved version of pybrick's drivebase module'''
@@ -116,7 +114,7 @@ class SpaceyDriveBase:
             self.motorL.run(motor_ang_spd)
             self.motorR.run(-motor_ang_spd)
 
-    def lineup(self, speed, ang_speed, sensorL, sensorR, iterations=10, thres=30, timeout=10000):
+    def lineup(self, speed, ang_speed, sensorL, sensorR, iterations=10, thres=configs.L_THRES_WB, timeout=10000):
         '''
         Line up on the edge of the field that the robot is facing at.
 
@@ -162,7 +160,7 @@ class SpaceyDriveBase:
 
         self.brake()
 
-    def lineside(self, speed, sensorL, sensorR, is_left, bias, thres=30):
+    def lineside(self, speed, sensorL, sensorR, is_left, bias, thres=configs.L_THRES_WB):
         '''
         Line up the the side of the stage and move forward an infintesimal step aligned with it
 
@@ -217,7 +215,7 @@ class SpaceyDriveBase:
         table_light = (sensorL.reflection() + sensorR.reflection()) / 2
 
         # Stop line threshold
-        STOP_LINE_THRES = 40
+        STOP_LINE_THRES = configs.L_THRES_WB
 
         # Go until black line
         while ((sensorL.reflection() > table_light - STOP_LINE_THRES) and not is_left) or ((sensorR.reflection() > table_light - STOP_LINE_THRES) and is_left):

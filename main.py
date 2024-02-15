@@ -70,6 +70,12 @@ try:
 
     bits = scanner.readbits(evalPassengerDest(set_dest))
 
+    # for bit in bits:
+    #     if bit:
+    #         brick.speaker.play_notes(["E4/4", "G4/4", "B4/4", "E5/4"], tempo=150)
+    #     else:
+    #         brick.speaker.play_notes(["F4/4", "A4/4", "B4/4", "D5/4"], tempo=150)
+
     # Turn robot to the right
     base.turn(BASE_TURN_SPD, 90)
 
@@ -89,9 +95,10 @@ try:
     base.turn(BASE_TURN_SPD, 90)
     base.straight(BASE_SPD, 160)
     base.turn(BASE_TURN_SPD, -90)
-    setArm(BigArm, False)
+    
     base.straight(BASE_SPD, 80)
     base.straight(BASE_SPD, -80)
+    setArm(BigArm, False)
 
     # Go to other black line
     base.turn(BASE_TURN_SPD, 90)

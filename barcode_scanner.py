@@ -4,6 +4,8 @@ A barcode scanner
 
 from pybricks.tools import wait
 from pybricks.parameters import Stop
+from configs import T_EPS
+import configs
 
 # Width of each bar (mm)
 BAR_WIDTH = 30
@@ -58,15 +60,11 @@ class BarCodeScanner:
         # Take measurement of start line
         startLineRef = self.Lsensor.reflection()
 
-        # Time epsilon, in ms (very small value)
-        T_EPS = 10
-        '''Time epsilon, in ms (very small value)'''
-
         # Threshold between start line and white bit (%)
-        REF_THRES = 20
+        REF_THRES = configs.L_THRES_SW
 
         # Threshold between white bit and black bit (%)
-        BIT_REF_THRES = 60
+        BIT_REF_THRES = configs.L_THRES_WB
 
         while startLineRef - self.Lsensor.reflection() < REF_THRES:
             wait(T_EPS)
